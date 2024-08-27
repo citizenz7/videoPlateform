@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des utilisateurs{% endblock %}
+
+{% block importmap %}{{ importmap(['app', 'user']) }}{% endblock %}
+
+{% block body %}
+    {# {{ dump() }} #}
+
+    {% include '_includes/_header.html.twig' %}
+
+    <section class="user-container">
+    <h1 class="title">Liste des utilisateurs {{ users|length }}</h1>
+    <div class="table-responsive">
+    <table id="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Email</th>
+                {# <th>Roles</th>
+                <th>Password</th> #}
+                <th>Vidéos terminées</th>
+                <th>Vidéos en cours</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td data-label="Id">{{ user.id }}</td>
+                <td data-label="Prénom">{{ user.firstname }}</td>
+                <td data-label="Nom">{{ user.lastname }}</td>
+                <td data-label="Email">{{ user.email }}</td>
+                {# <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
+                <td>{{ user.password }}</td> #}
+                <td data-label="Vidéos terminées">
+                    {% for watched in user.watchedVideos %}
+                        <a href="{{ path('video_watch', {'id': watched.id}) }}">
+                            <svg style="vertical-align: middle;" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="green" d="m9.55 15.15l8.475-8.475q.3-.3.7-.3t.7.3t.3.713t-.3.712l-9.175 9.2q-.3.3-.7.3t-.7-.3L4.55 13q-.3-.3-.288-.712t.313-.713t.713-.3t.712.3z"/></svg>
+                            {{ watched.title }}
+                        </a>
+                    {% endfor %}
+                </td>
+                <td data-label="Vidéos en cours">
+                    {% for progress in user.videoProgress %}
+                        {% if progress.progress < 100 %}
+                            <a href="{{ path('video_watch', {'id': progress.video.id}) }}">
+                                <svg style="vertical-align: middle;" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="green" d="m9.55 15.15l8.475-8.475q.3-.3.7-.3t.7.3t.3.713t-.3.712l-9.175 9.2q-.3.3-.7.3t-.7-.3L4.55 13q-.3-.3-.288-.712t.313-.713t.713-.3t.712.3z"/></svg>
+                                {{ progress.video.title }} ({{ progress.progress|number_format(0) }}%)
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+    {# <a href="{{ path('app_user_new') }}">Create new</a> #}
+
+</section>
+{% endblock %}

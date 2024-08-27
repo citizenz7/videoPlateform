@@ -37,9 +37,15 @@ class VideoController extends AbstractController
 
         $progress = $progressRepository->findOneBy(['user' => $user, 'video' => $video]);
 
+        $hasStarted = false;
+        if ($progress && $progress->getProgress() > 0 && $progress->getProgress() < $video->getDuration()) {
+            $hasStarted = true;
+        }
+
         return $this->render('video/watch.html.twig', [
             'video' => $video,
             'progress' => $progress ? $progress->getProgress() : 0,
+            'hasStarted' => $hasStarted
         ]);
     }
 
@@ -68,5 +74,19 @@ class VideoController extends AbstractController
         $em->flush();
 
         return new JsonResponse(['status' => 'progress saved']);
+    }
+
+    #[Route('/video/{id}/mark-as-watched', name: 'video_mark_as_watched', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function markAsWatched(Video $video, EntityManagerInterface $em): JsonResponse
+    {
+        $user = $this->getUser();
+
+        if (!$user->hasWatchedVideo($video)) {
+            $user->addWatchedVideo($video);
+            $em->flush();
+        }
+
+        return new JsonResponse(['status' => 'Video marked as watched']);
     }
 }

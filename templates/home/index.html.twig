@@ -2,11 +2,16 @@
 
 {% block title %}Hello HomeController!{% endblock %}
 
+{% block importmap %}{{ importmap(['app', 'home']) }}{% endblock %}
+
 {% block body %}
 
-<h1>Vidéos</h1>
-<p>
-    <a href="{{ path('app_video') }}">Voir les vidéos</a>
-</p>
+    {% include '_includes/_header.html.twig' %}
+
+    <section class="home-container">
+
+
+
+    </section>
 
 {% endblock %}

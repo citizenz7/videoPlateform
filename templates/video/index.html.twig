@@ -2,15 +2,24 @@
 
 {% block title %}Hello VideoController!{% endblock %}
 
+{% block importmap %}{{ importmap(['app', 'video']) }}{% endblock %}
+
 {% block body %}
+    {% include '_includes/_header.html.twig' %}
 
-    <h1>Toutes les vidéos</h1>
-    {% for video in videos %}
-        <p>
-            {% set minutes = (video.duration // 60) %}
-            {% set seconds = (video.duration % 60) %}
-            <a class="video-title" href="{{ path('video_watch', {id: video.id}) }}">{{ video.title }} <span class="duration">({{ minutes }}:{{ '%02d'|format(seconds) }})</span></a>
-        </p>
-    {% endfor %}
-
+    <section class="video-container">
+        <h1 class="title">Toutes les vidéos</h1>
+        <div class="video-content">
+            {% for video in videos %}
+                <div class="video-card">
+                    {% set minutes = (video.duration // 60) %}
+                    {% set seconds = (video.duration % 60) %}
+                    <a class="video-title" href="{{ path('video_watch', {id: video.id}) }}">
+                        {{ video.title }} <span class="duration">({{ minutes }}:{{ '%02d'|format(seconds) }})</span>
+                        <img src="{{ asset('uploads/videos/' ~ video.image) }}" alt="{{ video.title }}" class="image-video">
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
 {% endblock %}

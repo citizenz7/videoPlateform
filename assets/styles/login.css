@@ -1,0 +1,10 @@
+.login-container {
+    max-width: 1320px;
+    height: 100vh;
+    font-size: clamp(14px, 1.5vw, 17px);
+    font-weight: 400;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

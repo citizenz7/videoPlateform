@@ -1,0 +1,5 @@
+{% if field.value %}
+    <div>
+        {{ field.value|replace({'<div>': '', '</div>': '',})|raw }}
+    </div>
+{% endif %}

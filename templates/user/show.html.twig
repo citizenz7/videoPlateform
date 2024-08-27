@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User{% endblock %}
+
+{% block importmap %}{{ importmap(['app', 'user']) }}{% endblock %}
+
+{% block body %}
+    {% include '_includes/_header.html.twig' %}
+
+    <section class="user-container">
+        <h1 class="title">Mon compte : {{ user.firstname }} {{ user.lastname }}</h1>
+
+        <table id="table">
+            <tbody>
+                <tr>
+                    <th>Id</th>
+                    <td>{{ user.id }}</td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>{{ user.email }}</td>
+                </tr>
+                <tr>
+                    <th>Vidéos vues</th>
+                    <td>
+                        {% for watched in user.watchedVideos %}
+                            <a href="{{ path('video_watch', {'id': watched.id}) }}">
+                                <svg style="vertical-align: middle;" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="green" d="m9.55 15.15l8.475-8.475q.3-.3.7-.3t.7.3t.3.713t-.3.712l-9.175 9.2q-.3.3-.7.3t-.7-.3L4.55 13q-.3-.3-.288-.712t.313-.713t.713-.3t.712.3z"/></svg>
+                                {{ watched.title }}
+                            </a>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Vidéos en cours</th>
+                    <td>
+                        {% for progress in user.videoProgress %}
+                            {% if progress.progress < 100 %}
+                                <a href="{{ path('video_watch', {'id': progress.video.id}) }}">
+                                    <svg style="vertical-align: middle;" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="green" d="m9.55 15.15l8.475-8.475q.3-.3.7-.3t.7.3t.3.713t-.3.712l-9.175 9.2q-.3.3-.7.3t-.7-.3L4.55 13q-.3-.3-.288-.712t.313-.713t.713-.3t.712.3z"/></svg>
+                                    {{ progress.video.title }} ({{ progress.progress|number_format(0) }}%)
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+
+                {# <tr>
+                    <th>Roles</th>
+                    <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
+                </tr>
+                <tr>
+                    <th>Password</th>
+                    <td>{{ user.password }}</td>
+                </tr> #}
+            </tbody>
+        </table>
+
+        <div class="users-list">
+            <a href="{{ path('app_user_index') }}">Liste des utilisateurs</a>
+        </div>
+
+        {# <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a> #}
+
+        {# {{ include('user/_delete_form.html.twig') }} #}
+    </section>
+{% endblock %}

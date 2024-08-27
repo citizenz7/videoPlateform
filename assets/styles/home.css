@@ -1,0 +1,9 @@
+.home-container {
+    max-width: 1320px;
+    height: 100%;
+    text-align: center;
+    font-size: clamp(14px, 1.5vw, 17px);
+    font-weight: 400;
+    padding: 10px 0;
+    margin: 10px auto;
+}

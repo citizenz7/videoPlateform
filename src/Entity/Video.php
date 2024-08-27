@@ -30,9 +30,19 @@ class Video
     #[ORM\Column]
     private ?float $duration = null;
 
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'watchedVideos')]
+    private Collection $watched;
+
+    #[ORM\Column(length: 255)]
+    private ?string $image = null;
+
     public function __construct()
     {
         $this->videoProgress = new ArrayCollection();
+        $this->watched = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -102,6 +112,45 @@ class Video
     public function setDuration(float $duration): static
     {
         $this->duration = $duration;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getWatched(): Collection
+    {
+        return $this->watched;
+    }
+
+    public function addWatched(User $watched): static
+    {
+        if (!$this->watched->contains($watched)) {
+            $this->watched->add($watched);
+            $watched->addWatchedVideo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWatched(User $watched): static
+    {
+        if ($this->watched->removeElement($watched)) {
+            $watched->removeWatchedVideo($this);
+        }
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): static
+    {
+        $this->image = $image;
 
         return $this;
     }

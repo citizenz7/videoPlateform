@@ -33,6 +33,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    public function findNonAdminUsers(): array
+    {
+        $allUsers = $this->findAll();
+
+        // Filtrer les utilisateurs pour exclure ceux avec le rôle ROLE_ADMIN
+        return array_filter($allUsers, function (User $user) {
+            return !in_array('ROLE_ADMIN', $user->getRoles());
+        });
+    }
+
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */

@@ -16,6 +16,22 @@ return [
         'path' => './assets/app.js',
         'entrypoint' => true,
     ],
+    'home' => [
+        'path' => './assets/js/home.js',
+        'entrypoint' => true,
+    ],
+    'video' => [
+        'path' => './assets/js/video.js',
+        'entrypoint' => true,
+    ],
+    'user' => [
+        'path' => './assets/js/user.js',
+        'entrypoint' => true,
+    ],
+    'login' => [
+        'path' => './assets/js/login.js',
+        'entrypoint' => true,
+    ],
     '@hotwired/stimulus' => [
         'version' => '3.2.2',
     ],

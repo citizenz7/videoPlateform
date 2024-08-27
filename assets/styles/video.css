@@ -1,0 +1,118 @@
+.video-container {
+    position: relative;
+    margin: 35px auto;
+    max-width: 1320px;
+    height: 100%;
+}
+
+.text__center {
+    text-align: center;
+}
+
+.video-container .title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: clamp(20px, 2.5vw, 28px);
+    font-weight: 700;
+    color: #333;
+}
+
+.progress-bar {
+    display: flex;
+    justify-content: center;
+    background-color: #333;
+    color: #fff;
+    padding: 7px;
+    border-radius: 3px;
+    width: 100%;
+}
+
+/* Masquer tout sauf le bouton de lecture/pause */
+video::-webkit-media-controls-enclosure {
+    display: none;
+}
+
+video::-webkit-media-controls-play-button {
+    display: block;
+    margin: 0 auto;
+}
+
+#play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    background-color: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    outline: none;
+    transition: opacity 0.5s;
+    /* Smooth transition for visibility */
+}
+
+.video-title {
+    font-size: clamp(14px, 2.5vw, 19px);
+    font-weight: 600;
+}
+
+.video-title .duration {
+    font-weight: 400;
+    font-size: clamp(12px, 1.5vw, 14px);
+    color: #999;
+}
+
+.play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    background-color: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    outline: none;
+}
+
+.video-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.video-content .video-card {
+    width: 32%;
+    text-align: center;
+}
+
+.image-video {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    min-height: 275px;
+    object-fit: cover;
+}
+
+.video-content-detail {
+    width: 640px;
+    position: relative;
+    margin: 15px auto;
+}
+
+
+@media screen and (max-width: 768px) {
+    .video-content-detail {
+        width: 90%;
+    }
+
+    .video-content .video-card {
+        width: 90%;
+    }
+
+    .image-video {
+        object-fit: none;
+    }
+}

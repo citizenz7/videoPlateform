@@ -1,0 +1,57 @@
+.user-container {
+    max-width: 1320px;
+    height: 100%;
+    font-size: clamp(14px, 1.5vw, 17px);
+    font-weight: 400;
+    padding: 10px 0;
+    margin: 10px auto;
+}
+
+.user-container .title {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: clamp(20px, 2.5vw, 28px);
+    font-weight: 700;
+    color: #333;
+}
+
+.users-list {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.users-list a {
+    text-decoration: none;
+    background-color: #04AA6D;
+    padding: 10px;
+    border-radius: 5px;
+    color: #fff;
+    font-size: clamp(14px, 1.5vw, 17px);
+    font-weight: 600;
+    margin: 0 10px;
+    transition: all 0.3s ease;
+}
+
+.users-list a:hover {
+    background-color: #333;
+    transition: all 0.3s ease;
+}
+
+.videos-badge {
+    background-color: #04AA6D;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: clamp(13px, 1.5vw, 15px);
+    font-weight: 600;
+    margin: 10px 5px 10px 0;
+    text-align: center;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.videos-badge:hover {
+    background-color: #333;
+    transition: all 0.3s ease;
+}

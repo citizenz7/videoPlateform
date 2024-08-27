@@ -2,81 +2,112 @@
 
 {% block title %}Hello VideoController!{% endblock %}
 
-{% block importmap %}{{ importmap('app') }}{% endblock %}
+{% block importmap %}{{ importmap(['app', 'video']) }}{% endblock %}
 
 {% block body %}
 
-<section class="video-container">
+    {% include '_includes/_header.html.twig' %}
 
-    <h1>{{ video.title }}</h1>
-    <p>
-        Durée de la vidéo :
-        {% set minutes = (video.duration // 60) %}
-        {% set seconds = (video.duration % 60) %}
-        {{ minutes }}:{{ '%02d'|format(seconds) }}
-    </p>
+    <section class="video-container text__center">
 
-    <div style="width: 640px; position: relative; margin: 15px auto;">
-        <!-- Video element with custom controls -->
-        <video id="video-player" width="640">
-            <source src="{{ asset('uploads/videos/' ~ video.url) }}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
+        <h1>{{ video.title }}</h1>
+        <p>
+            Durée de la vidéo :
+            {% set minutes = (video.duration // 60) %}
+            {% set seconds = (video.duration % 60) %}
+            {{ minutes }}:{{ '%02d'|format(seconds) }}
+        </p>
 
-        <!-- Custom play button -->
-        <button id="play-button" class="play-button">
-            ▶️
-        </button>
+        <div class="video-content-detail">
+            <!-- Video element with custom controls -->
+            <video id="video-player" width="100%">
+                <source src="{{ asset('uploads/videos/' ~ video.url) }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
 
-        <!-- Progress bar -->
-        <div class="progress-bar">
-            Progression&nbsp;:&nbsp;<span id="progress-percentage">0%</span>
+            <!-- Custom play button -->
+            <button id="play-button" class="play-button">
+                ▶️
+            </button>
+
+            <!-- Progress bar -->
+            <div class="progress-bar">
+                Progression&nbsp;:&nbsp;<span id="progress-percentage">0%</span>
+            </div>
         </div>
-    </div>
 
-</section>
+        {% if hasStarted %}
+            <p class="alert-warning">Vous avez commencé à regarder cette vidéo, mais vous ne l'avez pas encore terminée.</p>
+        {% endif %}
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
         const video = document.getElementById('video-player');
         const playButton = document.getElementById('play-button');
         const progressPercentage = document.getElementById('progress-percentage');
-        const savedProgress = {{ progress }};
+        const savedProgress = {{ progress|json_encode|raw }}; // Assure-toi que cette variable est correctement échappée
         let hideButtonTimeout;
 
-        // Set the saved progress time
-        video.currentTime = savedProgress;
+        // Vérifie si les éléments sont présents
+        if (!video || !playButton) {
+            console.error('Éléments vidéo ou bouton de lecture manquants.');
+            return;
+        }
 
-        // Hide default controls
+        // Initialise le bouton de lecture et la progression
+        video.addEventListener('loadedmetadata', function() {
+            video.currentTime = savedProgress;
+            updateProgress(); // Met à jour la progression immédiatement après le chargement des métadonnées
+        });
+
+        // Cache les contrôles par défaut
         video.controls = false;
 
-        // Handle play/pause button
+        // Gère le bouton de lecture/pause
         playButton.addEventListener('click', function() {
             if (video.paused) {
                 video.play();
-                playButton.textContent = '⏸️';  // Change to pause icon
-                showPlayButton(); // Ensure button is shown when playing
+                playButton.textContent = '⏸️';  // Change pour l'icône de pause
+                showPlayButton(); // Assure que le bouton est visible lorsqu'il joue
             } else {
                 video.pause();
-                playButton.textContent = '▶️';  // Change to play icon
+                playButton.textContent = '▶️';  // Change pour l'icône de lecture
             }
         });
 
-        // Update the progress bar as the video plays
+        // Met à jour la barre de progression pendant que la vidéo joue
         video.addEventListener('timeupdate', function() {
             updateProgress();
         });
 
-        // Change play/pause button icon when video ends or is paused
+        // Change l'icône du bouton de lecture lorsque la vidéo est en pause ou se termine
         video.addEventListener('pause', function() {
-            playButton.textContent = '▶️';  // Change to play icon
+            playButton.textContent = '▶️';  // Change pour l'icône de lecture
         });
 
         video.addEventListener('ended', function() {
-            playButton.textContent = '▶️';  // Change to play icon
+            playButton.textContent = '▶️';  // Change pour l'icône de lecture
+
+            // Marque la vidéo comme regardée
+            fetch('{{ path('video_mark_as_watched', {id: video.id}) }}', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'Video marked as watched') {
+                    console.log('Vidéo marquée comme regardée');
+                }
+            });
         });
 
-        // Function to update progress
+        // Fonction pour mettre à jour la progression
         function updateProgress() {
             const currentProgress = video.currentTime;
             const totalDuration = video.duration;
@@ -88,55 +119,54 @@
                 progressPercentage.textContent = '0%';
             }
 
-            // Send progress to the server
-            if (totalDuration > 0) {
-                fetch('{{ path('video_progress', {id: video.id}) }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams({
-                        'progress': currentProgress
-                    })
-                });
-            }
+            // Envoie la progression au serveur
+            fetch('{{ path('video_progress', {id: video.id}) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'progress': currentProgress
+                })
+            });
         }
 
-        // Ensure the progress is updated immediately after metadata is loaded
+        // Assure que la progression est mise à jour immédiatement après le chargement des métadonnées
         video.addEventListener('loadedmetadata', function() {
             updateProgress();
         });
 
-        // Show the play button immediately when hovering over the video
+        // Affiche le bouton de lecture lors du survol de la vidéo
         video.addEventListener('mouseover', function() {
             showPlayButton();
         });
 
-        // Hide the play button after a period of inactivity
+        // Cache le bouton de lecture après une période d'inactivité
         video.addEventListener('mouseleave', function() {
             startHideButtonTimer();
         });
 
-        // Function to show the play button and reset the timer
+        // Fonction pour afficher le bouton de lecture et réinitialiser le minuteur
         function showPlayButton() {
-            playButton.style.opacity = '1'; // Make button visible
-            clearTimeout(hideButtonTimeout); // Clear any existing timer
-            startHideButtonTimer(); // Restart the timer
+            playButton.style.opacity = '1'; // Rend le bouton visible
+            clearTimeout(hideButtonTimeout); // Efface tout minuteur existant
+            startHideButtonTimer(); // Redémarre le minuteur
         }
 
-        // Function to hide the play button
+        // Fonction pour cacher le bouton de lecture
         function hidePlayButton() {
-            playButton.style.opacity = '0'; // Make button invisible
+            playButton.style.opacity = '0'; // Rend le bouton invisible
         }
 
-        // Start a timer to hide the play button after 2 seconds
+        // Démarre un minuteur pour cacher le bouton de lecture après 2 secondes
         function startHideButtonTimer() {
             hideButtonTimeout = setTimeout(hidePlayButton, 2000);
         }
 
-        // Initially hide the play button
+        // Cache initialement le bouton de lecture
         hidePlayButton();
     });
-</script>
+
+    </script>
 
 {% endblock %}

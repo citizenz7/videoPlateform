@@ -1,0 +1,5 @@
+{% if 'ROLE_ADMIN' in entity.instance.roles and 'ROLE_USER' in entity.instance.roles %}
+    <span class="badge-admin">Administrateur</span>
+{% else %}
+    <span class="badge-user">Utilisateur</span>
+{% endif %}

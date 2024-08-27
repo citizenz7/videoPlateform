@@ -39,9 +39,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: VideoProgress::class, mappedBy: 'user')]
     private Collection $videoProgress;
 
+    /**
+     * @var Collection<int, Video>
+     */
+    #[ORM\ManyToMany(targetEntity: Video::class, inversedBy: 'watched')]
+    #[ORM\JoinTable(name: 'user_videos_watched')]
+    private Collection $watchedVideos;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $firstname = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $lastname = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
+
+    #[ORM\Column]
+    private ?bool $active = true;
+
     public function __construct()
     {
         $this->videoProgress = new ArrayCollection();
+        $this->watchedVideos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -145,6 +165,83 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $videoProgress->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Video>
+     */
+    public function getWatchedVideos(): Collection
+    {
+        return $this->watchedVideos;
+    }
+
+    public function addWatchedVideo(Video $watchedVideo): static
+    {
+        if (!$this->watchedVideos->contains($watchedVideo)) {
+            $this->watchedVideos->add($watchedVideo);
+        }
+
+        return $this;
+    }
+
+    public function hasWatchedVideo(Video $video): bool
+    {
+        return $this->watchedVideos->contains($video);
+    }
+
+    public function removeWatchedVideo(Video $watchedVideo): static
+    {
+        $this->watchedVideos->removeElement($watchedVideo);
+
+        return $this;
+    }
+
+    public function getFirstname(): ?string
+    {
+        return $this->firstname;
+    }
+
+    public function setFirstname(?string $firstname): static
+    {
+        $this->firstname = $firstname;
+
+        return $this;
+    }
+
+    public function getLastname(): ?string
+    {
+        return $this->lastname;
+    }
+
+    public function setLastname(?string $lastname): static
+    {
+        $this->lastname = $lastname;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): static
+    {
+        $this->active = $active;
 
         return $this;
     }
