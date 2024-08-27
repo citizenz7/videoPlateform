@@ -1,0 +1,142 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello VideoController!{% endblock %}
+
+{% block importmap %}{{ importmap('app') }}{% endblock %}
+
+{% block body %}
+
+<section class="video-container">
+
+    <h1>{{ video.title }}</h1>
+    <p>
+        Durée de la vidéo :
+        {% set minutes = (video.duration // 60) %}
+        {% set seconds = (video.duration % 60) %}
+        {{ minutes }}:{{ '%02d'|format(seconds) }}
+    </p>
+
+    <div style="width: 640px; position: relative; margin: 15px auto;">
+        <!-- Video element with custom controls -->
+        <video id="video-player" width="640">
+            <source src="{{ asset('uploads/videos/' ~ video.url) }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+
+        <!-- Custom play button -->
+        <button id="play-button" class="play-button">
+            ▶️
+        </button>
+
+        <!-- Progress bar -->
+        <div class="progress-bar">
+            Progression&nbsp;:&nbsp;<span id="progress-percentage">0%</span>
+        </div>
+    </div>
+
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const video = document.getElementById('video-player');
+        const playButton = document.getElementById('play-button');
+        const progressPercentage = document.getElementById('progress-percentage');
+        const savedProgress = {{ progress }};
+        let hideButtonTimeout;
+
+        // Set the saved progress time
+        video.currentTime = savedProgress;
+
+        // Hide default controls
+        video.controls = false;
+
+        // Handle play/pause button
+        playButton.addEventListener('click', function() {
+            if (video.paused) {
+                video.play();
+                playButton.textContent = '⏸️';  // Change to pause icon
+                showPlayButton(); // Ensure button is shown when playing
+            } else {
+                video.pause();
+                playButton.textContent = '▶️';  // Change to play icon
+            }
+        });
+
+        // Update the progress bar as the video plays
+        video.addEventListener('timeupdate', function() {
+            updateProgress();
+        });
+
+        // Change play/pause button icon when video ends or is paused
+        video.addEventListener('pause', function() {
+            playButton.textContent = '▶️';  // Change to play icon
+        });
+
+        video.addEventListener('ended', function() {
+            playButton.textContent = '▶️';  // Change to play icon
+        });
+
+        // Function to update progress
+        function updateProgress() {
+            const currentProgress = video.currentTime;
+            const totalDuration = video.duration;
+
+            if (totalDuration > 0) {
+                const percentage = (currentProgress / totalDuration) * 100;
+                progressPercentage.textContent = percentage.toFixed(2) + ' %';
+            } else {
+                progressPercentage.textContent = '0%';
+            }
+
+            // Send progress to the server
+            if (totalDuration > 0) {
+                fetch('{{ path('video_progress', {id: video.id}) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        'progress': currentProgress
+                    })
+                });
+            }
+        }
+
+        // Ensure the progress is updated immediately after metadata is loaded
+        video.addEventListener('loadedmetadata', function() {
+            updateProgress();
+        });
+
+        // Show the play button immediately when hovering over the video
+        video.addEventListener('mouseover', function() {
+            showPlayButton();
+        });
+
+        // Hide the play button after a period of inactivity
+        video.addEventListener('mouseleave', function() {
+            startHideButtonTimer();
+        });
+
+        // Function to show the play button and reset the timer
+        function showPlayButton() {
+            playButton.style.opacity = '1'; // Make button visible
+            clearTimeout(hideButtonTimeout); // Clear any existing timer
+            startHideButtonTimer(); // Restart the timer
+        }
+
+        // Function to hide the play button
+        function hidePlayButton() {
+            playButton.style.opacity = '0'; // Make button invisible
+        }
+
+        // Start a timer to hide the play button after 2 seconds
+        function startHideButtonTimer() {
+            hideButtonTimeout = setTimeout(hidePlayButton, 2000);
+        }
+
+        // Initially hide the play button
+        hidePlayButton();
+    });
+</script>
+
+{% endblock %}

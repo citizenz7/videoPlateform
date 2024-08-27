@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello VideoController!{% endblock %}
+
+{% block body %}
+
+    <h1>Toutes les vidéos</h1>
+    {% for video in videos %}
+        <p>
+            {% set minutes = (video.duration // 60) %}
+            {% set seconds = (video.duration % 60) %}
+            <a class="video-title" href="{{ path('video_watch', {id: video.id}) }}">{{ video.title }} <span class="duration">({{ minutes }}:{{ '%02d'|format(seconds) }})</span></a>
+        </p>
+    {% endfor %}
+
+{% endblock %}
