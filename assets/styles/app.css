@@ -59,6 +59,9 @@ header nav ul li a:hover {
     font-size: clamp(11px, 1.5vw, 13px);
     margin: 10px 0 15px 0;
     text-align: center;
+    border: 1px solid #685555;
+    padding: 5px;
+    border-radius: 5px;
 }
 
 .alert-danger {
@@ -68,6 +71,17 @@ header nav ul li a:hover {
     margin: 10px 0 15px 0;
     text-align: center;
     border: 1px solid red;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.alert-success {
+    color: green;
+    font-weight: 600;
+    font-size: clamp(11px, 1.5vw, 13px);
+    margin: 10px 0 15px 0;
+    text-align: center;
+    border: 1px solid green;
     padding: 5px;
     border-radius: 5px;
 }

@@ -1,11 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello VideoController!
-{% endblock %}
+{% block title %}Hello VideoController!{% endblock %}
 
-{% block importmap %}
-	{{ importmap(['app', 'video']) }}
-{% endblock %}
+{% block importmap %}{{ importmap(['app', 'video']) }}{% endblock %}
 
 {% block body %}
     {{ dump() }}
@@ -45,6 +42,10 @@
 		{% if hasStarted %}
 			<p class="alert-warning">Vous avez commencé à regarder cette vidéo, mais vous ne l'avez pas encore terminée.</p>
 		{% endif %}
+
+        {% if hasWatched %}
+            <p class="alert-success">Vous avez regardé cette vidéo à 100% !</p>
+        {% endif %}
 
 	</section>
 
