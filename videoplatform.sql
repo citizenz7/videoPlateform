@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:3306
--- Généré le : mar. 27 août 2024 à 12:19
+-- Généré le : mer. 28 août 2024 à 07:24
 -- Version du serveur : 10.11.8-MariaDB-0ubuntu0.24.04.1
 -- Version de PHP : 8.3.6
 
@@ -109,14 +109,10 @@ CREATE TABLE `user_videos_watched` (
 --
 
 INSERT INTO `user_videos_watched` (`user_id`, `video_id`) VALUES
-(1, 1),
-(1, 3),
-(1, 4),
 (2, 1),
 (2, 3),
 (2, 4),
-(3, 1),
-(3, 3);
+(3, 1);
 
 -- --------------------------------------------------------
 
@@ -160,15 +156,7 @@ CREATE TABLE `video_progress` (
 --
 
 INSERT INTO `video_progress` (`id`, `progress`, `user_id`, `video_id`, `last_watched_at`) VALUES
-(4, 52.360498, 1, 1, '2024-08-27 10:31:52'),
-(5, 144.428117, 2, 3, '2024-08-27 11:12:19'),
-(6, 144.428117, 2, 1, '2024-08-27 11:16:24'),
-(7, 144.428117, 3, 1, '2024-08-27 08:56:50'),
-(8, 144.428117, 3, 3, '2024-08-27 09:07:57'),
-(9, 144.428117, 1, 3, '2024-08-27 09:23:55'),
-(10, 145.078276, 1, 4, '2024-08-27 10:54:44'),
-(11, 145.078276, 2, 4, '2024-08-27 11:08:46'),
-(12, 43.230952, 3, 4, '2024-08-27 11:17:45');
+(33, 3.062493, 3, 3, '2024-08-28 07:23:23');
 
 --
 -- Index pour les tables déchargées
@@ -244,7 +232,7 @@ ALTER TABLE `video`
 -- AUTO_INCREMENT pour la table `video_progress`
 --
 ALTER TABLE `video_progress`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- Contraintes pour les tables déchargées
